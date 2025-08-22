@@ -4,3 +4,4 @@ jinja2
 telethon
 python-dotenv
 pocketoptionapi-async
+python-multipart
