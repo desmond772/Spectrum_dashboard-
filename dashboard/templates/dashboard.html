@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spectrum Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dark-bg">
+    <h1>Spectrum Dashboard</h1>
+    <form method="post" action="/switch-mode" class="mode-switch">
+        <button type="submit" name="mode" value="demo" class="{{ 'selected' if data['mode'] == 'demo' else '' }}">Demo</button>
+        <button type="submit" name="mode" value="live" class="{{ 'selected' if data['mode'] == 'live' else '' }}">Live</button>
+    </form>
+    <div class="balances">
+        <div>Demo Balance: <span>${{ data['demo_balance'] }}</span></div>
+        <div>Live Balance: <span>${{ data['live_balance'] }}</span></div>
+    </div>
+    <div class="dashboard-grid">
+        <div class="source-section">
+            <h2>Source One</h2>
+            <div>Total Wins: {{ data['source_one']['wins'] }}</div>
+            <div>Total Losses: {{ data['source_one']['losses'] }}</div>
+            <div>Martingale Wins: {{ data['source_one']['martingale_wins'] }}</div>
+            <div>Status: {{ data['source_one'].get('status', 'stopped') }}</div>
+            <div>Martingale Level: {{ data['source_one'].get('martingale_level', '-') }}</div>
+        </div>
+        <div class="source-section">
+            <h2>Source Two</h2>
+            <div>Total Wins: {{ data['source_two']['wins'] }}</div>
+            <div>Total Losses: {{ data['source_two']['losses'] }}</div>
+            <div>Martingale Wins: {{ data['source_two']['martingale_wins'] }}</div>
+            <div>Status: {{ data['source_two'].get('status', 'stopped') }}</div>
+            <div>Martingale Level: {{ data['source_two'].get('martingale_level', '-') }}</div>
+        </div>
+        <div class="combined-section">
+            <h2>Combined</h2>
+            <div>Total Wins: {{ data['combined']['wins'] }}</div>
+            <div>Total Losses: {{ data['combined']['losses'] }}</div>
+            <div>Martingale Wins: {{ data['combined']['martingale_wins'] }}</div>
+            <div>Status: {{ data['combined'].get('status', 'stopped') }}</div>
+        </div>
+    </div>
+</body>
+</html>
