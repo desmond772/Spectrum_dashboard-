@@ -12,6 +12,10 @@
   ],
   "routes": [
     {
+      "src": "/favicon.png",
+      "dest": "/static/favicon.ico"
+    },
+    {
       "src": "/(.*)",
       "dest": "main.py"
     }
