@@ -6,17 +6,14 @@ import config
 
 app = create_dashboard_app()
 
-# Entrypoint for bot and dashboard
-if __name__ == "__main__":
-    async def run():
-        # Start trading executor and telegram listener
-        trade_executor = TradeExecutor()
-        telegram_listener = TelegramListener(trade_executor)
-        await asyncio.gather(
-            telegram_listener.start(),
-            trade_executor.run(),
-        )
+async def run():
+    trade_executor = TradeExecutor()
+    telegram_listener = TelegramListener(trade_executor)
+    await asyncio.gather(
+        telegram_listener.start(),
+        trade_executor.run(),
+    )
 
-    # Run FastAPI app for dashboard (for Vercel, entrypoint is app)
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(run())
