@@ -3,7 +3,7 @@
 <head>
     <title>Spectrum Dashboard</title>
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/enhanced-styles.css">
 </head>
 <body class="dark-bg">
     <h1>Spectrum Dashboard</h1>
@@ -30,7 +30,7 @@
             <div>Total Losses: {{ data['source_two']['losses'] }}</div>
             <div>Martingale Wins: {{ data['source_two']['martingale_wins'] }}</div>
             <div>Status: {{ data['source_two'].get('status', 'stopped') }}</div>
-            <div>Martingale Level: {{ data['source_two'].get('martingale_level', '-') }}</div>
+            <div>Martingale Level: {{ data['source_two data['source_two'].get('martingale_level', '-') }}</div>
         </div>
         <div class="combined-section">
             <h2>Combined</h2>
@@ -41,5 +41,4 @@
         </div>
     </div>
 </body>
-                </html>
-                
+</html>
