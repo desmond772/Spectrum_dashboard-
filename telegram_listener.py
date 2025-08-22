@@ -5,13 +5,13 @@ import re
 class TelegramListener:
     def __init__(self):
         self.client = TelegramClient("session_name", config.TELEGRAM_API_ID, config.TELEGRAM_API_HASH)
+        self.client.add_event_handler(self.handler, events.NewMessage(chats=[config.TELEGRAM_CHANNEL_ONE, config.TELEGRAM_CHANNEL_TWO]))
 
     async def start(self):
         await self.client.start()
         await self.client.run_until_disconnected()
 
-    @self.client.on(events.NewMessage(chats=[config.TELEGRAM_CHANNEL_ONE, config.TELEGRAM_CHANNEL_TWO]))
-    async def handler(event):
+    async def handler(self, event):
         message = event.raw_text
 
         # Source One message pattern
