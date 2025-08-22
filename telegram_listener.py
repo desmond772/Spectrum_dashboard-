@@ -1,7 +1,7 @@
 from telethon import TelegramClient, events
 import config
-import re
 import logging
+from signal_parser import parse_signal_source_one, parse_signal_source_two
 
 class TelegramListener:
     def __init__(self, trade_executor):
@@ -15,40 +15,11 @@ class TelegramListener:
 
     async def handler(self, event):
         message = event.raw_text
-
-        # Source One message pattern
-        pattern_one = re.compile(r"([A-Z]{3}/[A-Z]{3}).*?Expiration \d+M.*?Entry at (\d{2}:\d{2}).*?(BUY|PUT).*?Martingale levels.*?1️⃣ level at (\d{2}:\d{2}).*?2️⃣ level at (\d{2}:\d{2}).*?3️⃣ level at (\d{2}:\d{2})", re.DOTALL)
-
-        # Source Two message pattern
-        pattern_two = re.compile(r"\d+ minutes expiry ([A-Z]{3}/[A-Z]{3});(\d{2}:\d{2});(PUT|CALL|BUY).*?TIME TO (\d{2}:\d{2}) — TIME TO (\d{2}:\d{2})", re.DOTALL)
-
-        match_one = pattern_one.search(message)
-        match_two = pattern_two.search(message)
-
-        if match_one:
-            # Extract information from match_one
-            currency_pair = match_one.group(1)
-            entry_time = match_one.group(2)
-            direction = match_one.group(3)
-            martingale_level_1 = match_one.group(4)
-            martingale_level_2 = match_one.group(5)
-            martingale_level_3 = match_one.group(6)
-
-            logging.info(f"Currency Pair: {currency_pair}")
-            logging.info(f"Entry Time: {entry_time}")
-            logging.info(f"Direction: {direction}")
-            logging.info(f"Martingale Levels: {martingale_level_1}, {martingale_level_2}, {martingale_level_3}")
-        elif match_two:
-            # Extract information from match_two
-            currency_pair = match_two.group(1)
-            entry_time = match_two.group(2)
-            direction = match_two.group(3)
-            martingale_level_1 = match_two.group(4)
-            martingale_level_2 = match_two.group(5)
-
-            logging.info(f"Currency Pair: {currency_pair}")
-            logging.info(f"Entry Time: {entry_time}")
-            logging.info(f"Direction: {direction}")
-            logging.info(f"Martingale Levels: {martingale_level_1}, {martingale_level_2}")
+        signal = parse_signal_source_one(message) or parse_signal_source_two(message)
+        if signal:
+            logging.info(f"Currency Pair: {signal['asset']}")
+            logging.info(f"Entry Time: {signal['entry']}")
+            logging.info(f"Direction: {signal['direction']}")
+            logging.info(f"Martingale Levels: {signal['martingale_levels']}")
         else:
             logging.error("Message format not recognized")
