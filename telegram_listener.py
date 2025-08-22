@@ -1,10 +1,12 @@
 from telethon import TelegramClient, events
 import config
 import re
+import logging
 
 class TelegramListener:
-    def __init__(self):
+    def __init__(self, trade_executor):
         self.client = TelegramClient("session_name", config.TELEGRAM_API_ID, config.TELEGRAM_API_HASH)
+        self.trade_executor = trade_executor
         self.client.add_event_handler(self.handler, events.NewMessage(chats=[config.TELEGRAM_CHANNEL_ONE, config.TELEGRAM_CHANNEL_TWO]))
 
     async def start(self):
@@ -32,10 +34,10 @@ class TelegramListener:
             martingale_level_2 = match_one.group(5)
             martingale_level_3 = match_one.group(6)
 
-            log_info(f"Currency Pair: {currency_pair}")
-            log_info(f"Entry Time: {entry_time}")
-            log_info(f"Direction: {direction}")
-            log_info(f"Martingale Levels: {martingale_level_1}, {martingale_level_2}, {martingale_level_3}")
+            logging.info(f"Currency Pair: {currency_pair}")
+            logging.info(f"Entry Time: {entry_time}")
+            logging.info(f"Direction: {direction}")
+            logging.info(f"Martingale Levels: {martingale_level_1}, {martingale_level_2}, {martingale_level_3}")
         elif match_two:
             # Extract information from match_two
             currency_pair = match_two.group(1)
@@ -44,9 +46,9 @@ class TelegramListener:
             martingale_level_1 = match_two.group(4)
             martingale_level_2 = match_two.group(5)
 
-            log_info(f"Currency Pair: {currency_pair}")
-            log_info(f"Entry Time: {entry_time}")
-            log_info(f"Direction: {direction}")
-            log_info(f"Martingale Levels: {martingale_level_1}, {martingale_level_2}")
+            logging.info(f"Currency Pair: {currency_pair}")
+            logging.info(f"Entry Time: {entry_time}")
+            logging.info(f"Direction: {direction}")
+            logging.info(f"Martingale Levels: {martingale_level_1}, {martingale_level_2}")
         else:
-            log_error("Message format not recognized")
+            logging.error("Message format not recognized")
