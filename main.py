@@ -4,7 +4,7 @@ from trade_executor import TradeExecutor
 from telegram_listener import TelegramListener
 import config
 import logging
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -50,9 +50,8 @@ async def lifespan(app: FastAPI):
         logging.error(f"Error in shutdown event: {e}", exc_info=True)
 
 app = FastAPI(lifespan=lifespan)
-router = APIRouter()
 
-@router.post("/start")
+@app.post("/start")
 async def start():
     global running, task
     if not running:
@@ -62,22 +61,20 @@ async def start():
     else:
         return {"message": "Bot is already running"}
 
-@router.post("/stop")
+@app.post("/stop")
 async def stop():
     global running, task
     if running:
         running = False
         if task:
             task.cancel()
-            try:
+            if task:
                 await task
             except asyncio.CancelledError:
                 pass
         return {"message": "Bot stopped successfully"}
     else:
         return {"message": "Bot is already stopped"}
-
-app.include_router(router)
 
 try:
     include_dashboard_app(app)
