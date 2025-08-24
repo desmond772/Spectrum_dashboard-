@@ -1,10 +1,11 @@
 import asyncio
-from dashboard.app import create_dashboard_app
+from dashboard.app import include_dashboard_app
 from trade_executor import TradeExecutor
 from telegram_listener import TelegramListener
 import config
 import logging
-from fastapi import APIRouter
+from fastapi import APIRouter, FastAPI
+from contextlib import asynccontextmanager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -30,18 +31,13 @@ async def run():
         running = False
         logging.info("Application stopped")
 
-app = create_dashboard_app()
-router = APIRouter()
-
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     try:
         logging.info("Startup event triggered")
     except Exception as e:
         logging.error(f"Error in startup event: {e}", exc_info=True)
-
-@app.on_event("shutdown")
-async def shutdown_event():
+    yield
     try:
         logging.info("Shutdown event triggered")
         if task:
@@ -52,6 +48,9 @@ async def shutdown_event():
                 pass
     except Exception as e:
         logging.error(f"Error in shutdown event: {e}", exc_info=True)
+
+app = FastAPI(lifespan=lifespan)
+router = APIRouter()
 
 @router.post("/start")
 async def start():
@@ -79,3 +78,8 @@ async def stop():
         return {"message": "Bot is already stopped"}
 
 app.include_router(router)
+
+try:
+    include_dashboard_app(app)
+except Exception as e:
+    logging.error(f"Error including dashboard app: {e}", exc_info=True)
