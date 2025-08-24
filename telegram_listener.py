@@ -9,12 +9,12 @@ logging.basicConfig(level=logging.INFO)
 class TelegramListener:
     def __init__(self, trade_executor):
         """ Initializes the TelegramListener with a trade executor.
-
+        
         Args:
             trade_executor: The trade executor to use.
         """
         try:
-            self.client = TelegramClient(StringSession(config.TELETHON_SESSION), config.TELEGRAM_API_ID, config.TELEGRAM_API_HASH)
+            self.client = TelegramClient(StringSession(config.TELETHON_SESSION), int(config.TELEGRAM_API_ID), config.TELEGRAM_API_HASH)
             self.trade_executor = trade_executor
             self.client.add_event_handler(self.handler, events.NewMessage(chats=[config.TELEGRAM_CHANNEL_ONE, config.TELEGRAM_CHANNEL_TWO]))
             logging.info("TelegramListener initialized successfully")
@@ -22,7 +22,8 @@ class TelegramListener:
             logging.error(f"Error initializing Telegram client: {e}")
 
     async def start(self) -> None:
-        """ Starts the TelegramListener. """
+        """ Starts the TelegramListener.
+        """
         try:
             await self.client.start()
             logging.info("TelegramListener started successfully")
@@ -34,7 +35,7 @@ class TelegramListener:
 
     async def handler(self, event: events.NewMessage.Event) -> None:
         """ Handles a new message event.
-
+        
         Args:
             event: The new message event.
         """
@@ -60,6 +61,4 @@ class TelegramListener:
             logging.error(f"Error handling message: {e}")
 
 if __name__ == "__main__":
-    import asyncio
-    listener = TelegramListener(None)
-    asyncio.run(listener.start())
+    pass
