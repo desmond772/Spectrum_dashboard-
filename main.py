@@ -4,8 +4,7 @@ from trade_executor import TradeExecutor
 from telegram_listener import TelegramListener
 import config
 import logging
-from fastapi import APIRouter, FastAPI
-from contextlib import asynccontextmanager
+from fastapi import APIRouter
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -31,13 +30,18 @@ async def run():
         running = False
         logging.info("Application stopped")
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+app = create_dashboard_app()
+router = APIRouter()
+
+@app.on_event("startup")
+async def startup_event():
     try:
         logging.info("Startup event triggered")
     except Exception as e:
         logging.error(f"Error in startup event: {e}", exc_info=True)
-    yield
+
+@app.on_event("shutdown")
+async def shutdown_event():
     try:
         logging.info("Shutdown event triggered")
         if task:
@@ -48,9 +52,6 @@ async def lifespan(app: FastAPI):
                 pass
     except Exception as e:
         logging.error(f"Error in shutdown event: {e}", exc_info=True)
-
-app = create_dashboard_app(lifespan=lifespan)
-router = APIRouter()
 
 @router.post("/start")
 async def start():
