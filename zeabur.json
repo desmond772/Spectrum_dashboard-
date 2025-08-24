@@ -1,0 +1,23 @@
+{
+  "version": 3,
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python-3.9",
+        "handler": "main.py"
+      }
+    }
+  ]
+}
