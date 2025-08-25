@@ -68,7 +68,7 @@ async def stop():
         running = False
         if task:
             task.cancel()
-            if task:
+            try:
                 await task
             except asyncio.CancelledError:
                 pass
