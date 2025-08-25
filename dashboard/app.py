@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from report_generator import ReportGenerator
 import config
+from fastapi.staticfiles import StaticFiles
 
 templates = Jinja2Templates(directory="dashboard/templates")
 trade_mode = config.TRADE_MODE
