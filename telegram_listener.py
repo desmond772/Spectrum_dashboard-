@@ -4,7 +4,7 @@ import logging
 from signal_parser import parse_signal_source_one, parse_signal_source_two
 from telethon.sessions import StringSession
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 class TelegramListener:
     def __init__(self, trade_executor):
