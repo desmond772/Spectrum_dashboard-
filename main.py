@@ -11,16 +11,14 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 trade_executor = TradeExecutor()
 telegram_listener = TelegramListener(trade_executor)
+
 running = False
-task = None
 
 async def run():
     try:
         logging.info("Starting application...")
-        await asyncio.gather(
-            telegram_listener.start(),
-            trade_executor.run(),
-        )
+        asyncio.create_task(telegram_listener.start())
+        await trade_executor.run()
         logging.info("Application started successfully")
     except asyncio.CancelledError:
         logging.info("Application cancelled")
@@ -40,12 +38,6 @@ async def lifespan(app: FastAPI):
     yield
     try:
         logging.info("Shutdown event triggered")
-        if task:
-            task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                pass
     except Exception as e:
         logging.error(f"Error in shutdown event: {e}", exc_info=True)
 
@@ -53,25 +45,19 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/start")
 async def start():
-    global running, task
+    global running
     if not running:
         running = True
-        task = asyncio.create_task(run())
+        asyncio.create_task(run())
         return {"message": "Bot started successfully"}
     else:
         return {"message": "Bot is already running"}
 
 @app.post("/stop")
 async def stop():
-    global running, task
+    global running
     if running:
         running = False
-        if task:
-            task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                pass
         return {"message": "Bot stopped successfully"}
     else:
         return {"message": "Bot is already stopped"}
