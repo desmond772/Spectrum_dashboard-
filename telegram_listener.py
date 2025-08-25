@@ -28,6 +28,7 @@ class TelegramListener:
         """
         try:
             await self.client.start()
+            logging.debug("Telegram client started")
             logging.info("Telegram connected successfully")
             logging.info("TelegramListener started successfully")
             await self.client.run_until_disconnected()
